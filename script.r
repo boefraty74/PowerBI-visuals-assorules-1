@@ -159,6 +159,21 @@ if(exists("settings_viz_params_rulesPerPlate"))
   if(is.na(rulesPerGraphPlate))
     rulesPerGraphPlate = 1
 }
+
+
+condRHS = ""
+if(exists("settings_additional_params_condRHS"))
+  condRHS = settings_additional_params_condRHS
+
+condLHS = ""
+if(exists("settings_additional_params_condLHS"))
+  condLHS = settings_additional_params_condLHS
+
+
+
+
+
+
 ###############Library Declarations###############
 
 libraryRequireInstall = function(packageName, ...)
@@ -361,6 +376,29 @@ cleanRedundant <- function(rules, maxRules2process = 3e+06, measure = "lift", me
   return(rules)
 }
 
+searchCondString = function(arrayStrings,cond)
+{
+ #parse cond
+  arrayCond = strsplit(cond, split =",")[[1]]
+  if(length(arrayCond)==0)
+    return(rep(TRUE,length(arrayStrings)))
+  
+  flags = rep(FALSE,length(arrayStrings))
+    for (oneCond in arrayCond)
+    {
+      pos = regexpr(oneCond,arrayStrings, fixed = TRUE)
+      flags = flags | (pos>0)
+    }
+  
+  return(flags)
+  
+}
+  
+  
+  
+  
+
+
 ###############Upfront input correctness validations (where possible)#################
 pbiWarning <- NULL
 
@@ -505,6 +543,39 @@ if(visualisationMethod!= "empty")
     rules = rules[1:maxRules]
 }
 
+if(visualisationMethod!= "empty" && length(rules)>0 && (condRHS!="" || condLHS!=""))
+{
+
+  rhs <- rules@rhs@data
+  lhs <- rules@lhs@data
+  NR = length(rules)
+  rhsColNames = colnames(rules@rhs)
+  lhsColNames = colnames(rules@lhs)
+  ruleStringsLHS = rep(NA,NR)
+  ruleStringsRHS = rep(NA,NR)
+  
+  for (r in (1:NR))
+  {
+    if(any(lhs[, r]))
+      ruleStringsLHS[r] <- paste(lhsColNames[lhs[, r]], collapse = ",")
+    
+    if(any(rhs[, r]))
+      ruleStringsRHS[r] <- paste(rhsColNames[rhs[, r]], collapse = ",")
+  }
+  
+  iiiL = searchCondString(ruleStringsLHS, condLHS)
+  iiiR = searchCondString(ruleStringsRHS, condRHS)
+  
+  iii = iiiL&iiiR
+  
+  rules = rules[iii]
+  
+}
+
+
+
+
+
 #cut showFrom to showTo
 if(length(rules)>=showFrom)
 {
@@ -604,4 +675,4 @@ if(visualisationMethod == "empty") #scatter (for Debug and Exploration)
   title(sub = pbiWarning, col.sub = "gray50")
 }
 
-remove("dataset")
+#remove("dataset")

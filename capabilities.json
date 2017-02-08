@@ -342,7 +342,17 @@
             "showWarnings":{
             "displayName": "Show warnings",
             "type": {  "bool": true}
-          }    
+          },
+            "condRHS":{
+            "displayName": "Condition RHS",
+            "description": "Comma separated strings to be matched to RHS rule using OR operator. Use \\, if comma is part of the string to be matched ",
+            "type": {  "text": true}
+          },
+            "condLHS":{
+            "displayName": "Condition LHS",
+             "description": "Comma separated strings to be matched to LHS rule using OR operator. Use \\, if comma is part of the string to be matched",
+            "type": {  "text": true}
+          }            
         }
     }
   },

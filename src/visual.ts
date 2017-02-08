@@ -55,6 +55,8 @@ module powerbi.extensibility.visual {
     interface VisualSettingsAdditionalParams {
         show: boolean;
         showWarnings: boolean;
+        condRHS: string;
+        condLHS: string;
     }
     export class Visual implements IVisual {
         private imageDiv: HTMLDivElement;
@@ -100,7 +102,9 @@ module powerbi.extensibility.visual {
             };
             this.settings_additional_params = <VisualSettingsAdditionalParams>{
                 show: false,
-                showWarnings: false
+                showWarnings: false,
+                condRHS: "",
+                condLHS: ""
             };
 
 
@@ -146,7 +150,9 @@ module powerbi.extensibility.visual {
             };
             this.settings_additional_params = <VisualSettingsAdditionalParams> {
                 show: getValue<boolean>(dataView.metadata.objects, 'settings_additional_params', 'show', false),
-                 showWarnings: getValue<boolean>(dataView.metadata.objects, 'settings_additional_params', 'showWarnings', false)
+                 showWarnings: getValue<boolean>(dataView.metadata.objects, 'settings_additional_params', 'showWarnings', false),
+                 condRHS: getValue<string>(dataView.metadata.objects, 'settings_additional_params', 'condRHS', ""),
+                 condLHS: getValue<string>(dataView.metadata.objects, 'settings_additional_params', 'condLHS', "")
             };
 
 
@@ -265,6 +271,8 @@ module powerbi.extensibility.visual {
                         properties: {
                             show: this.settings_additional_params.show,
                             showWarnings: this.settings_additional_params.showWarnings,
+                            condLHS: this.settings_additional_params.condLHS,
+                             condRHS: this.settings_additional_params.condRHS
                          },
                         selector: null
                     });
