@@ -361,7 +361,14 @@ cleanRedundant <- function(rules, maxRules2process = 3e+06, measure = "lift", me
      return(rules)
   
   subsetMat  <-  is.subset(rules)
-  subsetMat[lower.tri(subsetMat, diag = T)]  <-  NA
+  
+  
+  subsetMat[lower.tri(subsetMat, diag = T)]  <-  FALSE
+  
+  if(length(subsetMat)<=3)
+    return(rules)
+  
+  
   
   redundant  <-  which(colSums(subsetMat, na.rm = T) >=  1)
   toRemove = NULL
