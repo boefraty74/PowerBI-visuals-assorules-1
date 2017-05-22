@@ -40,18 +40,13 @@
 # REFERENCES: https://cran.r-project.org/web/packages/arules/arules.pdf
 # https://en.wikipedia.org/wiki/Association_rule_learning
 
-#save(list = ls(all.names = TRUE), file='C:/Users/boefraty/projects/PBI/R/tempData.Rda')
-#load(file='C:/Users/boefraty/projects/PBI/R/tempData.Rda')
-
-#PBI_EXAMPLE_DATASET for debugging purposes 
-if(!exists("dataset") && !exists("LHS") && !exists("RHS") && !exists("BOTH") && !exists("ID"))
+fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
+if(file.exists(dirname(fileRda)))
 {
-  data(Titanic)# and repeat ech row by frequency
-  Titanic1 = as.data.frame(Titanic)
-  Titanic2 <- data.frame(Titanic1[rep(c(1:nrow(Titanic1)), Titanic1$Freq), ])
-  Titanic2$Freq = NULL
-  dataset = cbind(ID = 1:nrow(Titanic2), Titanic2)
-
+  if(Sys.getenv("RSTUDIO")!="")
+    load(file= fileRda)
+  else
+    save(list = ls(all.names = TRUE), file=fileRda)
 }
 
 waitForData = FALSE # if waitForData == TRUE show empty plot 
@@ -251,7 +246,7 @@ if(!exists("columnsRHS"))
 ##PBI_PARAM: array of integer indexes for columns used both in RHS and LHS
 #Type: array of integers or NA or NULL, Default:NA, Range:NA, PossibleValues:NA, Remarks: If NA is used, no columns are selected
 if(!exists("columnsBoth"))
-columnsBoth = NA
+  columnsBoth = NA
 
 ##PBI_PARAM: minimum number of transactions (rows) to run  
 #Type: integer , Default:10, Range:[10, 100], PossibleValues:NA, Remarks: NA
@@ -358,7 +353,7 @@ cleanRedundant <- function(rules, maxRules2process = 3e+06, measure = "lift", me
   
   
   if(length(rules)<3)
-     return(rules)
+    return(rules)
   
   subsetMat  <-  is.subset(rules)
   
@@ -385,25 +380,25 @@ cleanRedundant <- function(rules, maxRules2process = 3e+06, measure = "lift", me
 
 searchCondString = function(arrayStrings,cond)
 {
- #parse cond
+  #parse cond
   arrayCond = strsplit(cond, split =",")[[1]]
   if(length(arrayCond)==0)
     return(rep(TRUE,length(arrayStrings)))
   
   flags = rep(FALSE,length(arrayStrings))
-    for (oneCond in arrayCond)
-    {
-      pos = regexpr(oneCond,arrayStrings, fixed = TRUE)
-      flags = flags | (pos>0)
-    }
+  for (oneCond in arrayCond)
+  {
+    pos = regexpr(oneCond,arrayStrings, fixed = TRUE)
+    flags = flags | (pos>0)
+  }
   
   return(flags)
   
 }
-  
-  
-  
-  
+
+
+
+
 
 
 ###############Upfront input correctness validations (where possible)#################
@@ -418,7 +413,7 @@ if(waitForData==FALSE &&(exists("LHS")||exists("RHS") || exists("BOTH")))
     LHS = data.frame()
   if(!exists("BOTH"))
     BOTH = data.frame()
- 
+  
   #exclude duplicates
   namesInLHSnRHSnotBOTH= setdiff(intersect(names(LHS),names(RHS)),names(BOTH)) # copy to BOTH
   if(length(namesInLHSnRHSnotBOTH)>0)
@@ -435,7 +430,7 @@ if(waitForData==FALSE &&(exists("LHS")||exists("RHS") || exists("BOTH")))
   if(length(namesInRHSnBOTH)>0)
     RHS=as.data.frame(RHS[,setdiff(names(RHS),namesInRHSnBOTH)])
   
-
+  
   columnsLHS = columnsRHS = columnsBoth = NULL
   
   NR = max(nrow(LHS),nrow(RHS),nrow(BOTH))
@@ -468,9 +463,9 @@ if(waitForData==FALSE &&(exists("LHS")||exists("RHS") || exists("BOTH")))
   }
   inRHS = length(columnsRHS)
   
-
-  dataset = cbind(LHS,BOTH,RHS)
-
+  if(nrow(LHS) > 1)
+    dataset = cbind(LHS,BOTH,RHS)
+  
 }
 
 
@@ -498,8 +493,8 @@ if(length(columnsLHS)+length(columnsBoth)<1 || length(columnsRHS)+length(columns
 {
   visualisationMethod = "empty"
   pbiWarning <- paste(pbiWarning, "Both LHS and RHS should not be empty", sep = "\n")
-
-#check if minRuleLength<= maxRuleLength
+  
+  #check if minRuleLength<= maxRuleLength
 }else if(minRuleLength>maxRuleLength )
 {
   visualisationMethod = "empty"
@@ -525,11 +520,11 @@ if(visualisationMethod!= "empty")
   #add names of columns for lhs, rhs 
   appearance = ConstructAppearanceList(colnames(dataset)[columnsLHS], colnames(dataset)[columnsRHS], colnames(dataset)[columnsBoth], transData)
   
-    # find association rules with default settings
+  # find association rules with default settings
   rules  <-  apriori(dataset, 
-                   parameter = list(minlen = minRuleLength, maxlen = maxRuleLength, supp = threshSupport, confidence = threshConfidence, target = "rules"), 
-                   appearance = appearance, 
-                   control  =  list(verbose = F))
+                     parameter = list(minlen = minRuleLength, maxlen = maxRuleLength, supp = threshSupport, confidence = threshConfidence, target = "rules"), 
+                     appearance = appearance, 
+                     control  =  list(verbose = F))
   
   #removeRules by upperThresholds
   if(!is.null(rules@quality$support))
@@ -552,7 +547,7 @@ if(visualisationMethod!= "empty")
 
 if(visualisationMethod!= "empty" && length(rules)>0 && (condRHS!="" || condLHS!=""))
 {
-
+  
   rhs <- rules@rhs@data
   lhs <- rules@lhs@data
   NR = length(rules)
@@ -603,11 +598,11 @@ if(length(rules) == 0)
 if(visualisationMethod == "graph") # graph 
 {
   gp = getGridPartition(length(rules), rulesPerGraphPlate)
- 
   
-   par(oma=0.25*c(1,1,1,1),mar=0.5*c(1,1,1,1), mfrow = c(gp$numRows, gp$numCols), xpd = TRUE)
+  
+  par(oma=0.25*c(1,1,1,1),mar=0.5*c(1,1,1,1), mfrow = c(gp$numRows, gp$numCols), xpd = TRUE)
   # unfortunatly: mar and xpd are overwrited
-    
+  
   for (p in 1:length(gp$partit))
   {
     s = sum(gp$partit[seq(1, length.out = p-1)])+1
@@ -620,7 +615,7 @@ if(visualisationMethod == "graph") # graph
     
     plot(rules[s:e], method = "graph", 
          control = list(type = "items", alpha = 1, measureLabels = FALSE, 
-                      cex = fontSizeGraph, precision = 1, arrowSize = 0.5, main = "",  layoutParams	 =  list(xpd = T)), edge.color = edge.color, margin = -0.01, frame = FALSE)
+                        cex = fontSizeGraph, precision = 1, arrowSize = 0.5, main = "",  layoutParams	 =  list(xpd = T)), edge.color = edge.color, margin = -0.01, frame = FALSE)
     
   }
 }
@@ -650,7 +645,7 @@ if(visualisationMethod == "table") # table
   
   tt  <-  ttheme_minimal(
     core = list(bg_params  =  list(fill  =  blues9[1:4], col = "gray"), 
-              fg_params = list(fontface = 3, cex = fontSizeGraph)), 
+                fg_params = list(fontface = 3, cex = fontSizeGraph)), 
     colhead = list(fg_params = list(col = "orange", fontface = 4L,cex = fontSizeGraph*1.1)), 
     rowhead = list(fg_params = list(col = "white", fontface = 3L)))
   
