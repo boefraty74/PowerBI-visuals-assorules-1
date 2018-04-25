@@ -157,7 +157,7 @@ module powerbi.extensibility.visual {
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            showWarnings: this.settings.settings_additional_params.showWarnings,
+                            showWarnings: this.settings.settings_additional_params.showWarnings
                          },
                         selector: null
                     });
