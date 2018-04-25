@@ -78,10 +78,6 @@ module powerbi.extensibility.visual {
          * This function gets called for each of the objects defined in the capabilities files and allows you to select which of the 
          * objects and properties you want to expose to the users in the property pane.
          */
-        // public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions):
-        //     VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
-        //     return VisualSettings.enumerateObjectInstances(this.settings || VisualSettings.getDefault(), options);
-        // }
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
             let objectName = options.objectName;
             let objectEnumeration = [];
@@ -91,7 +87,6 @@ module powerbi.extensibility.visual {
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                          //  show: this.settings_thresholds_params.show,
                             minRuleLength: inMinMaxString(this.settings.settings_thresholds_params.minRuleLength, 2, 10),
                             maxRuleLength: inMinMaxString(this.settings.settings_thresholds_params.maxRuleLength, Number(this.settings.settings_thresholds_params.minRuleLength), 10),
                             threshSupport: inMinMax(this.settings.settings_thresholds_params.threshSupport, 0, 1),
@@ -105,7 +100,6 @@ module powerbi.extensibility.visual {
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                          //  show: this.settings.settings_rules_params.show,
                             sortBy: this.settings.settings_rules_params.sortBy,
                             showFrom: this.settings.settings_rules_params.showFrom,
                             showTo: inMinMax(this.settings.settings_rules_params.showTo, this.settings.settings_rules_params.showFrom, 100)
@@ -118,7 +112,6 @@ module powerbi.extensibility.visual {
                         objectEnumeration.push({
                             objectName: objectName,
                             properties: {
-                               // show: this.settings.settings_viz_params.show,
                                 visualisationMethod: this.settings.settings_viz_params.visualisationMethod,
                                 rulesPerPlate: inVisMethodAndRulesPerPlate(this.settings.settings_viz_params.visualisationMethod, this.settings.settings_viz_params.rulesPerPlate),
                                 textSize: this.settings.settings_viz_params.textSize,
@@ -132,7 +125,6 @@ module powerbi.extensibility.visual {
                         objectEnumeration.push({
                             objectName: objectName,
                             properties: {
-                              //  show: this.settings.settings_viz_params.show,
                                 visualisationMethod: this.settings.settings_viz_params.visualisationMethod,
                                 colorBy: inVisMethodAndColorBy(this.settings.settings_viz_params.visualisationMethod, this.settings.settings_viz_params.colorBy)
                             },
@@ -143,7 +135,6 @@ module powerbi.extensibility.visual {
                         objectEnumeration.push({
                             objectName: objectName,
                             properties: {
-                               // show: this.settings.settings_viz_params.show,
                                 visualisationMethod: this.settings.settings_viz_params.visualisationMethod,
                                 textSize: this.settings.settings_viz_params.textSize
                             },
@@ -154,7 +145,6 @@ module powerbi.extensibility.visual {
                         objectEnumeration.push({
                             objectName: objectName,
                             properties: {
-                              //  show: this.settings.settings_viz_params.show,
                                 visualisationMethod: this.settings.settings_viz_params.visualisationMethod,
                                 textSize: this.settings.settings_viz_params.textSize
                             },
@@ -167,7 +157,6 @@ module powerbi.extensibility.visual {
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                           // show: this.settings.settings_additional_params.show,
                             showWarnings: this.settings.settings_additional_params.showWarnings,
                          },
                         selector: null
